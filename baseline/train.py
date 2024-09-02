@@ -1,6 +1,3 @@
-물론입니다! 주석을 다시 영어로 변경한 코드는 아래와 같습니다:
-
-```python
 from __future__ import print_function
 import sys
 import time
@@ -240,4 +237,83 @@ if __name__ == "__main__":
     test_width = int(net_options['test_width'])
     test_height = int(net_options['test_height'])
 
-    # Specify
+    # Specify which GPUs to use
+    use_cuda = True
+    seed = int(time.time())
+    torch.manual_seed(seed)
+    if use_cuda:
+        os.environ['CUDA_VISIBLE_DEVICES'] = gpus
+        torch.cuda.manual_seed(seed)
+
+    # Specify the model and the loss
+    model = Darknet(modelcfg)
+    # Parameters
+    num_classes = model.num_classes
+    anchors = model.anchors
+    num_anchors = model.num_anchors
+
+    region_loss = RegionLoss(num_keypoints=8, num_classes=num_classes, anchors=anchors, num_anchors=num_anchors, pretrain_num_epochs=pretrain_num_epochs)
+
+    # Model settings
+    model.load_weights_until_last(initweightfile)
+    model.print_network()
+    model.seen = 0
+    region_loss.iter = model.iter
+    region_loss.seen = model.seen
+    processed_batches = model.seen // batch_size
+    init_width = model.width
+    init_height = model.height
+    init_epoch = model.seen // nsamples
+
+    # Variable to save
+    training_iters = []
+    training_losses = []
+    testing_iters = []
+    testing_losses = []
+    testing_accuracies = []
+
+    # Specify the number of workers
+    kwargs = {'num_workers': 4, 'pin_memory': True} if use_cuda else {}
+
+    # Get the dataloader for test data
+    test_loader = torch.utils.data.DataLoader(dataset.listDataset(testlist,
+                                                                  shape=(test_width, test_height),
+                                                                  shuffle=False,
+                                                                  transform=transforms.Compose([transforms.ToTensor(), ]),
+                                                                  train=False),
+                                              batch_size=1, shuffle=False, **kwargs)
+
+    # Pass the model to GPU
+    if use_cuda:
+        model = torch.nn.DataParallel(model, device_ids=list(map(int, gpus.split(",")))).cuda()  # Multiple GPU parallelism
+
+    # Get the optimizer
+    params_dict = dict(model.named_parameters())
+    params = []
+    for key, value in params_dict.items():
+        if key.find('.bn') >= 0 or key.find('.bias') >= 0:
+            params += [{'params': [value], 'weight_decay': 0.0}]
+        else:
+            params += [{'params': [value], 'weight_decay': decay * batch_size}]
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate / batch_size, momentum=momentum, dampening=0, weight_decay=decay * batch_size)
+
+    best_acc = -sys.maxsize
+    for epoch in range(init_epoch, max_epochs):
+        # Train
+        niter = train(epoch)
+        # Test and save
+        if ((epoch + 1) % 10 == 0) & ((epoch + 1) > 15):
+            test(epoch, niter)
+            logging('save training stats to %s/costs.npz' % (backupdir))
+            np.savez(os.path.join(backupdir, "costs.npz"),
+                     training_iters=training_iters,
+                     training_losses=training_losses,
+                     testing_iters=testing_iters,
+                     testing_accuracies=testing_accuracies,
+                     testing_losses=testing_losses)
+            if (testing_accuracies[-1] > best_acc):
+                best_acc = testing_accuracies[-1]
+                logging('best model so far!')
+                logging('save weights to %s/model.weights' % (backupdir))
+                model.module.save_weights('%s/model.weights' % (backupdir))
+    # shutil.copy2('%s/model.weights' % (backupdir), '%s/model_backup.weights' % (backupdir))
