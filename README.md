@@ -1,40 +1,32 @@
-## NIA 5. 객체 3D 데이터 (2021.07.22)
+![image](https://github.com/user-attachments/assets/2a644774-3afe-468a-846c-729346ef9237)##  3d bounding box object detection(3dbbox) 
 
 ### 1. 다운로드 및 코드 경로에서 압축 해제
 
-* 학습/평가 코드 + LINEMOD 정리 (nia_sample.7z: 5GB)
-           
-      https://www.dropbox.com/s/upat6b6nyij47dt/nia_sample.7z?dl=0
+### 2. 시스템 환경
 
-  코드 경로: ./ <br>
-  문서 공유: ./doc <br>
-  모델 구조 정의: ./cfg <br>
-  데이터 및 학습된 모델 경로: ./data <br>
-  LINEMOD 정리 (원본 + 세그멘테이션/큐브 라벨 포맷): ./LINEMOD <br>
-  배경 영상 (학습 시 다양한 배경 증강을 위해 활용): ./BG <br>
+## Python 3.6
+## CUDA 11.1 Cudnn 8
 
-****
+* pytorch
 
-### 2. 3090 GPU 기준 설치 방법
+      pip install torch==1.8.0+cu111 torchvision==0.9.0+cu111 torchaudio==0.8.0 -f https://download.pytorch.org/whl/torch_stable.html
 
-* PyCharm, Anaconda --> 3.6 Python 가상환경으로 선택
-* PyTorch v1.8.0 + CUDA 11.1 설치
+ 
+* OpenCV
 
-      conda install pytorch==1.8.0 torchvision==0.9.0 torchaudio==0.8.0 cudatoolkit=11.1 -c pytorch -c conda-forge <br>
+      pip install opencv-python (*pip install opencv-contrib-python==4.1.0.25로 설치)
 
-* OpenCV 설치
-
-      pip3 install opencv-python
       
-* Scipy 1.2.0 설치
+* Scipy
 
-      pip3 install scipy==1.2.0
+      pip install scipy==1.2.0
       
-* Pillow 8.2.2 설치
+* Pillow 
 
-      pip3 install pillow==8.2.0
-      
-****
+      pip install pillow==8.2.0
+
+* tqdm
+      pip install tqdm==4.64.1
 
 ### 3. 학습된 모델 테스트 (ape 예시)
 
