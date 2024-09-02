@@ -49,7 +49,7 @@ def train(epoch):
                                                             num_workers=8),
                                                 batch_size=batch_size, shuffle=True, **kwargs)
 
-    # TRAINING
+    # Training
     lr = adjust_learning_rate(optimizer, processed_batches)
     logging('epoch %d, processed %d samples, lr %f' % (epoch, epoch * len(train_loader.dataset), lr))
     # Start training
@@ -74,7 +74,7 @@ def train(epoch):
         # Compute loss, grow an array of losses for saving later on
         loss = region_loss(output, target, epoch)
         training_iters.append(epoch * math.ceil(len(train_loader.dataset) / float(batch_size)) + niter)
-        training_losses.append(loss.item())  # .data 대신 .item() 사용
+        training_losses.append(loss.item())  # Use .item() instead of .data
         niter += 1
 
         # Backprop: compute gradient of the loss with respect to model parameters
@@ -108,7 +108,7 @@ def eval(niter, datacfg):
     model.eval()
     iou_acc = []
     errs_2d = []
-    total_loss = 0.0  # 총 손실 초기화
+    total_loss = 0.0  # Initialize total loss
 
     
     # Get the parser for the test dataset
@@ -139,8 +139,8 @@ def eval(niter, datacfg):
         with torch.no_grad():  
             output = model(data)
         
-        # 손실 계산
-        loss = region_loss(output, target, niter)  # calculate loss
+        # Compute loss
+        loss = region_loss(output, target, niter)
         total_loss += loss.item() 
 
         # Using confidence threshold, eliminate low-confidence predictions
@@ -154,7 +154,7 @@ def eval(niter, datacfg):
             # For each image, get all the targets (for multiple object pose estimation, there might be more than 1 target per image)
             truths  = target[i].view(-1, num_labels)
             
-            # Get how many object are present in the scene
+            # Get how many objects are present in the scene
             num_gts = truths_length(truths)
 
             # Iterate through each ground-truth object
@@ -189,29 +189,22 @@ def eval(niter, datacfg):
                 iou = compute_convexhull_iou(corners2D_gt, corners2D_pr)
                 iou_acc.append(iou)
 
-    # 평균 손실 계산 및 기록
+    # Compute and log average loss
     mean_loss = total_loss / len(test_loader.dataset)
-    testing_losses.append(mean_loss)  # 손실 값을 testing_losses 리스트에 추가
-
-    # # Compute 2D reprojection score
-    eps = 1e-5
-    # for px_threshold in [15, 20, 25, 30, 35, 40]:
-    #     acc = len(np.where(np.array(errs_2d) <= px_threshold)[0]) * 100. / (len(errs_2d)+eps)
-    #     logging('   Acc using {} px 2D Projection = {:.2f}%'.format(px_threshold, acc))
+    testing_losses.append(mean_loss)  # Add the loss value to the testing_losses list
 
     # Compute 2D projection error metrics
     px_threshold = 20
+    eps = 1e-5
     total_iou = len(np.where(np.array(iou_acc) >= 0.8)[0]) * 100 / (len(iou_acc) + eps)
     acc = len(np.where(np.array(errs_2d) <= px_threshold)[0]) * 100. / (len(errs_2d)+eps)
     mean_corner_err_2d = np.mean(errs_2d)
-
 
     if testtime:
         print('-----------------------------------')
         print('   Mean corner error is %f' % (mean_corner_err_2d))
         print('   Acc using {} px 2D Projection = {:.2f}%'.format(px_threshold, acc))
         print('   Intersection Of Union = {:.2f}%'.format(total_iou))
-        # print('   Class Accuracy = {:.2f}%'.format(class_accuracy))
         print('-----------------------------------')
 
     # Register losses and errors for saving later on
@@ -276,20 +269,19 @@ if __name__ == "__main__":
     # Further params
     if not os.path.exists(backupdir):
         makedirs(backupdir)
-    # bg_file_names = get_all_files('/data/yolo3d/YOLO3D/3dhub/MISO/VOCdevkit/VOC2012/JPEGImages')
     nsamples      = file_lines(trainlist)
     use_cuda      = True
     seed          = int(time.time())
     best_acc      = -sys.maxsize
     num_labels    = num_keypoints*2+1 # + 2 for image width, height, +1 for image class
 
-    # Specify which gpus to use
+    # Specify which GPUs to use
     torch.manual_seed(seed)
     if use_cuda:
         os.environ['CUDA_VISIBLE_DEVICES'] = gpus
         torch.cuda.manual_seed(seed)
 
-    # Specifiy the model and the loss
+    # Specify the model and the loss
     model       = Darknet(modelcfg)
     region_loss = RegionLoss(num_keypoints=num_keypoints, num_classes=num_classes, anchors=anchors, num_anchors=num_anchors, pretrain_num_epochs=pretrain_num_epochs)
 
@@ -336,10 +328,10 @@ if __name__ == "__main__":
         test(0, 0)
     else:
         for epoch in range(init_epoch, max_epochs): 
-            # TRAIN
+            # Train
             niter = train(epoch)
-            # TEST and SAVE
-            if (epoch % 10 == 0) and (epoch is not 0): 
+            # Test and Save
+            if (epoch % 10 == 0) and (epoch != 0): 
                 test(niter)
                 logging('save training stats to %s/costs12.npz' % (backupdir))
                 np.savez(os.path.join(backupdir, "costs12.npz"),
