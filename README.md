@@ -142,6 +142,3 @@ Below is an example of the detection results:
 - **image.py** & **dataset.py**: Updated paths for custom datasets.
 - **yolo-pose.cfg**: Adjusted the number of filters for anchors and classes.
 - **inference.py**: Added visualization for bounding boxes and classes.
-
-#### Dataset Handlin
----
