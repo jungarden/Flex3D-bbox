@@ -73,7 +73,10 @@ Before training, ensure your dataset labels are correctly formatted using the tx
 ```sh
 python3 making_txt_labels.py
 ```
+* glove00 folder structure
 ![image](https://github.com/user-attachments/assets/5b821868-8962-4590-97a9-0eba3114513d)
+* glove00.data
+![image](https://github.com/user-attachments/assets/723c7cde-43e7-442a-8b76-dd37cba33793) 
 
 
 ### 4. Training (Multi-Object)
