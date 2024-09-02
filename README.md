@@ -1,11 +1,17 @@
-![image](https://github.com/user-attachments/assets/2a644774-3afe-468a-846c-729346ef9237)##  3d bounding box object detection(3dbbox) 
+##  3d bounding box object detection(3dbbox) 
 
-### 1. 다운로드 및 코드 경로에서 압축 해제
+- Utilizing various datasets (parcel3d, AIHUB, other custom datasets...)
+- Omitting reprojection process
+- Generating inference code
+- Adding multi-object inference
+- Introducing anchors
 
-### 2. 시스템 환경
+### 1. Download the repository including the necessary dataset
 
-## Python 3.6
-## CUDA 11.1 Cudnn 8
+### 2. System environment
+
+* Python 3.6
+* CUDA 11.1 Cudnn 8
 
 * pytorch
 
@@ -28,43 +34,40 @@
 * tqdm
       pip install tqdm==4.64.1
 
-### 3. 학습된 모델 테스트 (ape 예시)
+### 3. training (multi)
+      python3 train.py 
+      --datacfg data/occlusion.data 
+      --modelcfg cfg/yolo-pose-multi.cfg 
+      --initweightfile cfg/darknet19_448.conv.23
+      --pretrain_num_epochs 15
 
-* 공개된 학습 모델 테스트
+
+### 4. training (finetuning)
+      python3 train.py 
+      --datacfg data/trainbox.data
+      --modelcfg cfg/yolo-pose.cfg 
+      --initweightfile backup/*custom_dataset*/model.weights
+      --pretrain_num_epochs 5
+
+
       
-      python valid.py --datacfg data/ape.data --modelcfg cfg/yolo-pose.cfg --weightfile data/ape/model/model_backup.weights
-      
-* 큐브 시각화 
-      
-      python visualize.py --datacfg data/ape.data --modelcfg cfg/yolo-pose.cfg --weightfile data/ape/model/model_backup.weights
+### 5. inference
+      python3 img_inference.py 
+      --datacfg data/occlusion.data 
+      --modelcfg cfg/yolo-pose-multi.cfg 
+      --initweightfile backup/parcel3d.weights
+      --file video.mp4
 
-****
 
-### 4. LINEMOD 학습 (ape 예시)
+### 6. results
+![image](https://github.com/user-attachments/assets/80527fda-cfbc-41ae-b5b3-88779a124084)
 
-* 학습할 카테고리별로 실행
- 
-      python train.py --datacfg data/ape.data --modelcfg cfg/yolo-pose.cfg --initweightfile cfg/darknet19_448.conv.23 --pretrain_num_epochs 15
 
-****
 
-### 5. 참고
-
+### 7. reference
 * Original src.: https://github.com/microsoft/singleshotpose
-      
-      https://www.dropbox.com/s/lvmr4ssdyo2ham3/singleshotpose-master.zip?dl=0
-      
-<br>
+* other src : https://github.com/DatathonInfo/MISOChallenge-3Dobject
 
-* 00d3119 (on 21 Oct 2019)에서 수정한 부분 <br>
- 
---> region_loss.py <br>
-  134. 버전 업데이트에 따른 문법 변경 <br>
-**# nProposals = int((conf > 0.25).sum().data[0])** <br>
-**nProposals = int((conf > 0.25).sum().data)** <br>
-  173. 버전 업데이트에 따른 문법 변경 <br>
-**#print('%d: nGT %d, recall %d, proposals %d, loss: x %f, y %f, conf %f, total %f' % (self.seen, nGT, nCorrect, nProposals, loss_x.data[0], loss_y.data[0], loss_conf.data[0], loss.data[0]))** <br>
-**print('%d: nGT %d, recall %d, proposals %d, loss: x %f, y %f, conf %f, total %f' % (self.seen, nGT, nCorrect, nProposals, loss_x.data, loss_y.data, loss_conf.data, loss.data))** <br>
 
 --> train.py <br>
   309. 백그라운드 영상 경로 변경 <br>
