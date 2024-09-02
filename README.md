@@ -98,7 +98,8 @@ To train the model on multiple objects across datasets, use the following comman
 ```sh
 python3 train_multi.py \
 --datacfg data/occlusion.data \
---modelcfg cfg/yolo-pose-multi.cfg \
+--modelcfg
+cfg/yolo-pose-multi.cfg \
 --initweightfile cfg/darknet19_448.conv.23 \ 
 --pretrain_num_epochs 15
 ```
@@ -110,9 +111,9 @@ For finetuning on a custom dataset, run:
 
 ```sh
 python3 train.py \
---datacfg data/trainbox.data \
+--datacfg data/box3d.data \
 --modelcfg cfg/yolo-pose.cfg \
---initweightfile backup/*custom_dataset*/model.weights \
+--initweightfile backup/parcel3d/model.weights \
 --pretrain_num_epochs 5
 ```
 
@@ -121,10 +122,10 @@ python3 train.py \
 To perform inference on a video file, execute:
 
 ```sh
-python3 img_inference.py \
+python3 inference.py \
 --datacfg data/occlusion.data \
 --modelcfg cfg/yolo-pose-multi.cfg \
---initweightfile backup/parcel3d.weights \
+--initweightfile backup_multi/model.weights \
 --file video.mp4
 ```
 
