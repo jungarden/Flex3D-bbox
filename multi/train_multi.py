@@ -62,7 +62,7 @@ def train(epoch):
 
         if use_cuda:
             data = data.cuda()
-            target = target.cuda()  # 이 부분이 빠져 있었습니다.
+            target = target.cuda()
 
         # Zero the gradients before running the backward pass
         optimizer.zero_grad()
@@ -140,8 +140,8 @@ def eval(niter, datacfg):
             output = model(data)
         
         # 손실 계산
-        loss = region_loss(output, target, niter)  # 손실 계산
-        total_loss += loss.item()  # 총 손실에 더하기
+        loss = region_loss(output, target, niter)  # calculate loss
+        total_loss += loss.item() 
 
         # Using confidence threshold, eliminate low-confidence predictions
         trgt = target[0].view(-1, num_labels)
