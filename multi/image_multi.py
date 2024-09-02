@@ -339,15 +339,11 @@ def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, num_k
 
     filename = imgpath.split('/')[-1].replace('.png', '.txt').replace('.jpg', '.txt')
     
-    # 경로에 맞게 labpath 변경
+    # Modify labpath according to your needs
     labpath = os.path.join('data', imgpath.split('/')[-4], 'labels', filename)
-
-    # maskpath = imgpath.replace('원천데이터', '라벨링데이터').replace(type, '.Mask').replace('.png', '_b.png')
 
     ## data augmentation
     img = Image.open(imgpath).convert('RGB')
-    # mask = Image.open(maskpath).convert('RGB')
-    # bg = Image.open(bgpath).convert('RGB')
     # img = change_background(img, mask, bg)
     img,flip,dx,dy,sx,sy = data_augmentation(img, shape, jitter, hue, saturation, exposure)
     ow, oh = img.size
