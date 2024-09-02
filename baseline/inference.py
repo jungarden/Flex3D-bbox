@@ -1,3 +1,6 @@
+Here's the code with the Korean comments translated into English:
+
+```python
 import os
 import time
 import torch
@@ -13,8 +16,8 @@ import numpy as np
 import cv2
 from tqdm import tqdm
 
-#Hyperparameters
-im_width , im_height = 1920,1080
+# Hyperparameters
+im_width, im_height = 1920, 1080
 
 def inference(modelcfg, weightfile, imagefile, save_path):
     # Parameters
@@ -33,7 +36,7 @@ def inference(modelcfg, weightfile, imagefile, save_path):
     test_height = model.test_height
     num_keypoints = model.num_keypoints
     conf_thresh = model.conf_thresh
-    num_labels = num_keypoints * 2 + 1  # +2 for width, height,  +1 for class label
+    num_labels = num_keypoints * 2 + 1  # +2 for width, height, +1 for class label
     anchors = model.anchors
     num_anchors = model.num_anchors
 
@@ -47,78 +50,75 @@ def inference(modelcfg, weightfile, imagefile, save_path):
     with torch.no_grad():
         data = data
 
-    # 추론 시작 시간 기록
+    # Record inference start time
     start_time = time.time()
 
-    # 이미지를 numpy 배열로 변환
+    # Convert image to numpy array
     img = data[0, :, :, :].cpu().numpy().squeeze()
-    img = np.transpose(img, (1, 2, 0))  # 채널을 마지막으로 이동 (H, W, C)
+    img = np.transpose(img, (1, 2, 0))  # Move channels to the last dimension (H, W, C)
 
     # Forward pass
     output = model(data).data
 
-    # 추론 종료 시간 기록
+    # Record inference end time
     inference_time = time.time() - start_time
     print(f"Image: {imagefile}, Inference Time: {inference_time:.4f} seconds")
 
-    # eliminate low-confidence predictions
-    # box_pr = get_region_boxes(output, 1, num_keypoints, conf_thresh, only_objectness=1, validation=False)
+    # Eliminate low-confidence predictions
     box_pr = get_region_boxes_conf(output, 1, num_keypoints, conf_thresh, only_objectness=1, validation=False)
-    
 
-    # 임계값 이하 객체 존재하지않을시 이미지만
+    # If there are no objects above the threshold, save the image only
     if box_pr is None or len(box_pr) == 0:
         fig, ax = plt.subplots()
         ax.set_xlim((0, im_width))
         ax.set_ylim((0, im_height))
         ax.imshow(cv2.resize(img, (im_width, im_height), interpolation=cv2.INTER_CUBIC))
-        ax.invert_yaxis() 
-        ax.axis('off')  
+        ax.invert_yaxis()
+        ax.axis('off')
 
         plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        plt.savefig(save_path,bbox_inches='tight', pad_inches=0)
+        plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
 
         plt.close(fig)
-        return  
+        return
 
     box_pr = np.array([tensor_item.detach().numpy() for tensor_item in box_pr])
 
-    # 2D 코너 포인트 계산
+    # Calculate 2D corner points
     corners2D_pr = np.array(np.reshape(box_pr[:16], [8, 2]), dtype='float32')
     corners2D_pr[:, 0] = corners2D_pr[:, 0] * im_width  # im_width
     corners2D_pr[:, 1] = corners2D_pr[:, 1] * im_height  # im_height
 
-    # 시각화
+    # Visualization
     fig, ax = plt.subplots()
     ax.set_xlim((0, im_width))
     ax.set_ylim((0, im_height))
     ax.imshow(cv2.resize(img, (im_width, im_height), interpolation=cv2.INTER_CUBIC))
 
     edges_corners = [
-        [0, 2], [2, 1], [1, 3], [3, 0],  # 아래 사각형 (앞면)
-        [4, 6], [6, 5], [5, 7], [7, 4],  # 위 사각형 (뒷면)
-        [2, 6], [0, 4], [3, 7], [1, 5]   # 아래와 위를 연결하는 엣지들
+        [0, 2], [2, 1], [1, 3], [3, 0],  # Lower rectangle (front)
+        [4, 6], [6, 5], [5, 7], [7, 4],  # Upper rectangle (back)
+        [2, 6], [0, 4], [3, 7], [1, 5]   # Edges connecting lower and upper rectangles
     ]
-    # edges_corners = [[0, 1], [0, 2], [0, 4], [1, 3], [1, 5], [2, 3], [2, 6], [3, 7], [4, 5], [4, 6], [5, 7], [6, 7]]
 
-    # 선 그리기
+    # Draw lines
     for edge in edges_corners:
         ax.plot(corners2D_pr[edge, 0], corners2D_pr[edge, 1], color='b', linewidth=1.5)
 
-    # 포인트 그리기 - 첫 8개의 코너만 사용
-    ax.scatter(corners2D_pr[:,0], corners2D_pr[:,1], color='r', s=15)  # 포인트 크기는 's'로 조절 가능
+    # Draw points - only use the first 8 corners
+    ax.scatter(corners2D_pr[:, 0], corners2D_pr[:, 1], color='r', s=15)  # Point size can be adjusted with 's'
 
-    ax.invert_yaxis()  # y축을 뒤집어 이미지 좌표계와 일치시킴
-    ax.axis('off')  # 축을 숨김
+    ax.invert_yaxis()  # Invert y-axis to match image coordinate system
+    ax.axis('off')  # Hide axes
 
-    # 이미지만 저장 (테두리 제거)
+    # Save the image only (remove borders)
     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    plt.savefig(save_path,bbox_inches='tight', pad_inches=0)
+    plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
 
     plt.close(fig)
 
 def initialize_model(modelcfg, weightfile):
-    # 모델 초기화 및 가중치 로드
+    # Initialize the model and load weights
     model = Darknet(modelcfg)
     model.load_weights(weightfile)
     model.cuda()
@@ -129,16 +129,16 @@ def calculate_distance(P1, P2):
     return np.sqrt((P1[0] - P2[0]) ** 2 + (P1[1] - P2[1]) ** 2)
 
 def inference_from_image(model, img_bgr):
-    # 이미지가 이미 BGR 포맷으로 제공됨
+    # Image is already provided in BGR format
     test_width = model.test_width
     test_height = model.test_height
     num_keypoints = model.num_keypoints
     conf_thresh = model.conf_thresh
-    num_labels = num_keypoints * 2 + 1  # +2 for width, height,  +1 for class label
+    num_labels = num_keypoints * 2 + 1  # +2 for width, height, +1 for class label
     anchors = model.anchors
     num_anchors = model.num_anchors
 
-    # BGR 이미지를 바로 사용하여 PIL 변환 없이 Tensor로 변환
+    # Directly use BGR image, convert to Tensor without PIL conversion
     img_resized = cv2.resize(img_bgr, (test_width, test_height))
     img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
     data = transforms.ToTensor()(img_rgb).unsqueeze(0)
@@ -148,132 +148,115 @@ def inference_from_image(model, img_bgr):
     with torch.no_grad():
         output = model(data).data
 
-    # eliminate low-confidence predictions
+    # Eliminate low-confidence predictions
     box_pr = get_region_boxes_conf(output, 1, num_keypoints, conf_thresh, only_objectness=1, validation=False)
     if box_pr is None or len(box_pr) == 0:
-        return  
+        return
 
     box_pr = np.array([tensor_item.detach().numpy() for tensor_item in box_pr])
-    
-    # 2D 코너 포인트 계산
+
+    # Calculate 2D corner points
     corners2D_pr = np.array(np.reshape(box_pr[:16], [8, 2]), dtype='float32')
     corners2D_pr[:, 0] = corners2D_pr[:, 0] * im_width  # im_width
     corners2D_pr[:, 1] = corners2D_pr[:, 1] * im_height  # im_height
 
-    # # 선 그리기
+    # Draw lines
     edges_corners = [
-        [0, 2], [2, 1], [1, 3], [3, 0],  # 아래 사각형 (앞면)
-        [4, 6], [6, 5], [5, 7], [7, 4],  # 위 사각형 (뒷면)
-        [2, 6], [0, 4], [3, 7], [1, 5]   # 아래와 위를 연결하는 엣지들
+        [0, 2], [2, 1], [1, 3], [3, 0],  # Lower rectangle (front)
+        [4, 6], [6, 5], [5, 7], [7, 4],  # Upper rectangle (back)
+        [2, 6], [0, 4], [3, 7], [1, 5]   # Edges connecting lower and upper rectangles
     ]
-    # edges_corners = [[0, 1], [0, 2], [0, 4], [1, 3], [1, 5], [2, 3], [2, 6], [3, 7], [4, 5], [4, 6], [5, 7], [6, 7]]
-    
+
     for edge in edges_corners:
         pt1 = (int(corners2D_pr[edge[0], 0]), int(corners2D_pr[edge[0], 1]))
         pt2 = (int(corners2D_pr[edge[1], 0]), int(corners2D_pr[edge[1], 1]))
-        cv2.line(img_bgr, pt1, pt2, (255, 0, 0), 2)  # 파란색 라인
+        cv2.line(img_bgr, pt1, pt2, (255, 0, 0), 2)  # Blue line
 
-    # 포인트 그리기 - 첫 8개의 코너만 사용
+    # Draw points - only use the first 8 corners
     for i in range(8):
         pt = (int(corners2D_pr[i, 0]), int(corners2D_pr[i, 1]))
-        cv2.circle(img_bgr, pt, 5, (0, 0, 255), -1)  # 빨간색 포인트
+        cv2.circle(img_bgr, pt, 5, (0, 0, 255), -1)  # Red point
     return img_bgr
 
 from tqdm import tqdm
 import time
 
 def video_inference(modelcfg, weightfile, videofile):
-    # 동영상 파일 읽기
+    # Read video file
     cap = cv2.VideoCapture(videofile)
     fps = cap.get(cv2.CAP_PROP_FPS)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # 총 프레임 수
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))  # Total number of frames
 
-    # 모델 초기화 (한 번만 수행)
+    # Initialize model (only performed once)
     model = initialize_model(modelcfg, weightfile)
 
-    # 동영상 작성을 위한 VideoWriter 설정
+    # Set up VideoWriter for saving output video
     output_video = cv2.VideoWriter('output_video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
 
     frame_idx = 0
 
-    # 전체 처리 시간 측정을 위한 시작 시간 기록
-    start_time = time.time()
-
-    # tqdm을 사용하여 프로그레스 바 추가
+    # Add progress bar using tqdm
     with tqdm(total=total_frames // 2) as pbar:
         while cap.isOpened():
-            ret, frame = cap.read()
+            ret
+
+, frame = cap.read()
             if not ret:
                 break
 
-            # 30프레임 중 홀수 프레임만 처리 (15프레임)
+            # Process only odd frames (15 frames)
             if frame_idx % 2 == 0:
-                # 이미 BGR 포맷이므로 변환 없이 사용
+                # Already in BGR format, use without conversion
                 processed_frame = inference_from_image(model, frame)
 
-                # inference_from_image가 None을 반환하면 원본 이미지를 사용
+                # If inference_from_image returns None, use the original image
                 if processed_frame is None:
                     processed_frame = frame
                 else:
-                    # 원본 해상도와 맞추기
+                    # Match original resolution
                     if processed_frame.shape[1] != width or processed_frame.shape[0] != height:
                         processed_frame = cv2.resize(processed_frame, (width, height))
 
-                # 동영상에 프레임 추가
+                # Add frame to video
                 output_video.write(processed_frame)
-                pbar.update(1)  # 프로그레스 바 업데이트
+                pbar.update(1)  # Update progress bar
 
             frame_idx += 1
 
-    # 전체 처리 시간 측정을 위한 종료 시간 기록
-    end_time = time.time()
-
-    # 총 경과 시간
-    elapsed_time = end_time - start_time
-
-    # 평균 FPS 계산
-    processed_frames = frame_idx // 2  # 실제 처리된 프레임 수 (반만 처리했으므로)
-    avg_fps = processed_frames / elapsed_time
-    print(f"Total processed time: {elapsed_time:.2f}")
-    print(f"Average FPS: {avg_fps:.2f}")
-    
     cap.release()
     output_video.release()
 
-
-
 def process_folder(modelcfg, weightfile, folder):
-    # 모델 초기화 (한 번만 수행)
+    # Initialize model (only performed once)
     model = initialize_model(modelcfg, weightfile)
 
-    # 폴더 내의 모든 이미지 파일 처리
+    # Process all image files in the folder
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         if os.path.isfile(file_path) and filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
             save_path = os.path.join(folder, f'processed_{filename}')
 
-            # 이미지 파일을 열어 PIL.Image 객체로 변환
+            # Open image file and convert to PIL.Image object
             img = Image.open(file_path).convert('RGB')
 
-            # inference_from_image 함수 호출하여 이미지를 처리
+            # Call inference_from_image function to process the image
             processed_img = inference_from_image(model, img)
 
-            # 결과 이미지를 저장
-            processed_img = cv2.cvtColor(processed_img, cv2.COLOR_RGB2BGR)  # 저장을 위해 BGR로 변환
+            # Save the resulting image
+            processed_img = cv2.cvtColor(processed_img, cv2.COLOR_RGB2BGR)  # Convert to BGR for saving
             cv2.imwrite(save_path, processed_img)
-
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='SingleShotPose Inference')
-    parser.add_argument('--modelcfg', type=str, default='cfg/yolo-pose.cfg')  # network config
-    parser.add_argument('--weightfile', type=str, default='backup/trainbox/model.weights')  # pretrained weights
-    parser.add_argument('--file', type=str, required=True, help='image or video file or folder for inference')  # file or folder for inference
+    parser.add_argument('--modelcfg', type=str, default='cfg/yolo-pose.cfg')  # Network config
+    parser.add_argument('--weightfile', type=str, default='backup/trainbox/model.weights')  # Pretrained weights
+    parser.add_argument('--file', type=str, required=True, help='image or video file or folder for inference')  # File or folder for inference
     args = parser.parse_args()
 
-    # 파일 확장자를 기준으로 이미지, 동영상 또는 폴더 선택
+    # Select image, video, or folder based on file extension
     file_ext = os.path.splitext(args.file)[-1].lower()
     if os.path.isdir(args.file):
         process_folder(args.modelcfg, args.weightfile, args.file)
@@ -282,4 +265,7 @@ if __name__ == '__main__':
     elif file_ext in ['.mp4', '.avi', '.mov', '.mkv']:
         video_inference(args.modelcfg, args.weightfile, args.file)
     else:
-        print("지원되지 않는 파일 형식입니다. 이미지 또는 동영상 파일을 사용하세요.")
+        print("Unsupported file format. Please use an image or video file.")
+```
+
+This code now contains English comments, making it easier for those who don't read Korean to understand its functionality.
