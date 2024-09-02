@@ -16,29 +16,29 @@ import torch
 
 def get_final_class_from_output(output, num_keypoints, num_classes, num_anchors):
 
-    # 각 앵커에 대한 채널 수
-    channels_per_anchor = 2 * num_keypoints + 1 + num_classes  # 각 앵커에서 할당되는 채널 수
+    # Number of channels per anchor
+    channels_per_anchor = 2 * num_keypoints + 1 + num_classes  # Channels allocated for each anchor
 
-    # 첫 번째 앵커의 클래스 점수 시작 위치
-    first_anchor_class_start = 2 * num_keypoints + 1  # 클래스 점수가 시작되는 인덱스
+    # Starting index of class scores for the first anchor
+    first_anchor_class_start = 2 * num_keypoints + 1  # Index where class scores start
 
-    # 클래스 점수 인덱스 계산 및 추출
+    # Calculate and extract class score indices
     class_score_indices = []
     for i in range(num_anchors):
         start_idx = first_anchor_class_start + i * channels_per_anchor
         class_score_indices.extend(list(range(start_idx, start_idx + num_classes)))
 
-    # output에서 클래스 점수 추출
+    # Extract class scores from the output
     class_scores = output[:, class_score_indices, :, :]  # [batch_size, num_anchors*num_classes, grid_size, grid_size]
 
-    # 클래스 점수의 구조를 [batch_size, num_anchors, num_classes, grid_size, grid_size]로 변형
+    # Reshape class scores to [batch_size, num_anchors, num_classes, grid_size, grid_size]
     class_scores = class_scores.view(output.size(0), num_anchors, num_classes, output.size(2), output.size(3))
 
-    # 각 앵커에서 각 그리드 위치에서 가장 높은 확률을 가진 클래스를 선택
+    # Select the class with the highest probability at each grid location for each anchor
     predicted_classes = torch.argmax(class_scores, dim=2)  # [batch_size, num_anchors, grid_size, grid_size]
 
-    # 모든 그리드 위치에서 앵커들의 예측을 고려해 최종 클래스를 결정
-    # 여기서는 모든 앵커와 그리드에서 가장 자주 등장하는 클래스를 선택
+    # Determine the final class by considering predictions from all anchors and grids
+    # Here, we select the most frequent class across all anchors and grids
     all_predicted_classes = predicted_classes.view(-1).cpu().numpy()  # [num_anchors * grid_size * grid_size]
     final_class = torch.tensor(all_predicted_classes).mode()[0].item()
 
