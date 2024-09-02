@@ -112,7 +112,7 @@ class listDataset(Dataset):
                 img = img.resize(self.shape)
 
             filename = imgpath.split('/')[-1].replace('.png', '.txt').replace('.jpg', '.txt')
-            # 경로에 맞게 labpath 변경
+            # Modify labpath according to your needs
             # labpath = os.path.join('data', imgpath.split('/')[-4], 'labels', filename)
             labpath = imgpath.replace('.jpg', '.txt').replace('.png', '.txt').replace('augmented_images','augmented_labels').replace('Images','labels')
 
