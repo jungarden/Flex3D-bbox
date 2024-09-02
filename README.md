@@ -82,7 +82,7 @@ This script parses and converts your dataset's labeling information into the for
 To train the model on multiple objects across datasets, use the following command:
 
 ```sh
-python3 train.py \
+python3 train_multi.py \
 --datacfg data/occlusion.data \
 --modelcfg cfg/yolo-pose-multi.cfg \
 --initweightfile cfg/darknet19_448.conv.23 \ 
