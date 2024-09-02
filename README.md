@@ -19,7 +19,7 @@ This project focuses on 3D bounding box object detection using various datasets,
 Download the repository including the necessary datasets:
 
 ```sh
-git clone https://github.com/jungarden/3dbbox.git
+git clone https://github.com/jungarden/Flex3D-bbox.git
 ```
 
 ### 2. System Environment
