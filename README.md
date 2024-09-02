@@ -66,7 +66,7 @@ Install the required libraries as follows:
     pip install tqdm==4.64.1
     ```
 
-### 3. Preparing Dataset Labels
+### 3. Parsing
 
 Before training, ensure your dataset labels are correctly formatted using the txt_labels.py script: This script parses and converts your dataset's labeling information into the format required for training. Make sure to select the appropriate labeling method for your dataset, whether it is manually labeled or follows the AIHUB dataset format.
 
@@ -84,7 +84,7 @@ python3 making_txt_labels.py
 ![image](https://github.com/user-attachments/assets/723c7cde-43e7-442a-8b76-dd37cba33793) 
 
 
-### 4. Training (Multi-Object)
+### 4-1. Training (Multi-Object)
 
 To train the model on multiple objects across datasets, use the following command:
 
@@ -97,7 +97,7 @@ python3 train_multi.py \
 ```
 * darknet19_448.cov.23 is not included in this repo.
 
-### 5. Training (Finetuning)
+### 4-2. Training (Finetuning)
 
 For finetuning on a custom dataset, run:
 
@@ -109,7 +109,7 @@ python3 train.py \
 --pretrain_num_epochs 5
 ```
 
-### 6. Inference
+### 5. Inference
 
 To perform inference on a video file, execute:
 
@@ -121,13 +121,14 @@ python3 img_inference.py \
 --file video.mp4
 ```
 
-### 7. Results
+### 6. Results
 
 Below is an example of the detection results:
 *multi classes
 ![image](https://github.com/user-attachments/assets/80527fda-cfbc-41ae-b5b3-88779a124084)
 ![video](https://github.com/user-attachments/assets/43aae97d-c3c4-428c-a886-c2a883a1bf1d)
-### 8. References
+
+### 7. References
 
 - **Original Source**: [Microsoft SingleShotPose](https://github.com/microsoft/singleshotpose)
 - **Other Source**: [MISOChallenge-3Dobject](https://github.com/DatathonInfo/MISOChallenge-3Dobject)
