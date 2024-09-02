@@ -140,7 +140,7 @@ Below is an example of the detection results:
 #### Code Modifications
 
 - **train.py**: Removed internal parameters, rotation matrices, and reprojection variables.
-- **utils.py**: Created `build_target_anchors` to consider anchors.
+- **utils.py**: Created `build_target_anchors` to consider anchors in single detection(baseline), modified get_region_boxes to consider anchors.
 - **image.py** & **dataset.py**: Updated paths for custom datasets.
 - **yolo-pose.cfg**: Adjusted the number of filters for anchors and classes.
 - **inference.py**: Added visualization for bounding boxes and classes.
