@@ -6,7 +6,7 @@ This project focuses on 3D bounding box object detection using various datasets,
 
 ### Key Features
 
-- **Utilizing Various Datasets**: Includes `parcel3d`, `AIHUB`, and other custom datasets.
+- **Utilizing Various Datasets**: Includes `parcel3d`, `AIHUB`, and other "manually labeled" custom datasets.
 - **Omitting Reprojection Process**: Streamlined pipeline by removing unnecessary reprojection.
 - **Generating Inference Code**: Easy-to-use inference code generation.
 - **Adding Multi-Object Inference**: Enhanced capabilities for detecting multiple objects simultaneously.
@@ -70,7 +70,7 @@ Install the required libraries as follows:
 Before training, ensure your dataset labels are correctly formatted using the `txt_labels.py` script:
 
 ```sh
-python3 txt_labels.py
+python3 making_txt_labels.py
 ```
 ![image](https://github.com/user-attachments/assets/5b821868-8962-4590-97a9-0eba3114513d)
 
@@ -84,10 +84,10 @@ To train the model on multiple objects across datasets, use the following comman
 python3 train.py \
 --datacfg data/occlusion.data \
 --modelcfg cfg/yolo-pose-multi.cfg \
---initweightfile cfg/darknet19_448.conv.23 \
+--initweightfile cfg/darknet19_448.conv.23 \ 
 --pretrain_num_epochs 15
 ```
-
+* darknet19_448.cov.23 is not included in this repo. 
 ### 5. Training (Finetuning)
 
 For finetuning on a custom dataset, run:
@@ -115,8 +115,9 @@ python3 img_inference.py \
 ### 7. Results
 
 Below is an example of the detection results:
-
+*multi classes
 ![image](https://github.com/user-attachments/assets/80527fda-cfbc-41ae-b5b3-88779a124084)
+![video](https://github.com/user-attachments/assets/43aae97d-c3c4-428c-a886-c2a883a1bf1d)
 
 ### 8. References
 
@@ -131,8 +132,8 @@ Below is an example of the detection results:
 - **Repository Structure**:
   - `baseline`: Single object detection
   - `multi`: Multi-object detection
-  - `dataset`: Contains AIHUB and custom datasets
-  - `utils`: Contains utility functions
+  - `dataset`: Contains various datasets
+  - `utils`: Contains utility functions (e.g get_anchors.py)
 
 #### Code Modifications
 
@@ -144,5 +145,3 @@ Below is an example of the detection results:
 
 #### Dataset Handlin
 ---
-
-This updated README should now clearly guide users through setting up the environment, preparing the dataset, and performing training and inference, while ensuring that the dataset labels are correctly formatted before training begins.
