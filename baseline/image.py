@@ -75,7 +75,7 @@ def data_augmentation(img, shape, jitter, hue, saturation, exposure):
     return img, flip, dx,dy,sx,sy 
 
 def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy, num_keypoints, max_num_gt):
-    num_labels = 2 * num_keypoints + 1  # 8개의 키포인트 * 2 + 1(confidence) = 17
+    num_labels = 2 * num_keypoints + 1  # 8 key points * 2 + 1(confidence) = 17
     label = np.zeros((max_num_gt, num_labels))
     
     if os.path.getsize(labpath):
@@ -91,13 +91,10 @@ def fill_truth_detection(labpath, w, h, flip, dx, dy, sx, sy, num_keypoints, max
             for j in range(num_keypoints):
                 xs.append(bs[i][2*j+1])
                 ys.append(bs[i][2*j+2])
-            
-            # 키포인트들을 정규화하고 변환
             for j in range(num_keypoints):
                 xs[j] = min(0.999, max(0, xs[j] * sx - dx)) 
                 ys[j] = min(0.999, max(0, ys[j] * sy - dy))
-                
-            # 업데이트된 xs와 ys를 bs에 다시 저장
+    
             for j in range(num_keypoints):
                 bs[i][2*j+1] = xs[j]
                 bs[i][2*j+2] = ys[j]
