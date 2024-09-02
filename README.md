@@ -1,6 +1,6 @@
 ---
 
-# Flexible 3D Object Detection (Flex3D-bbox)
+# Flexible 3D Object Detection          (Flex3D-bbox)
 
 ### Introduction
 
