@@ -72,7 +72,7 @@ class listDataset(Dataset):
 
             filename = imgpath.split('/')[-1].replace('.png', '.txt').replace('.jpg', '.txt')
             
-            # 경로에 맞게 labpath 변경
+            # Modify labpath according to your needs
             labpath = os.path.join('data', imgpath.split('/')[-4], 'labels', filename)
                 
             num_labels = 2*self.num_keypoints+1 # +2 for ground-truth of width/height , +1 for class label
