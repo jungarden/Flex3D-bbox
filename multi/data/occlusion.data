@@ -1,0 +1,9 @@
+train  = data/train_occlusion.txt
+valid1 = data/glove00/test.txt
+valid2 = data/shoes01/test.txt
+valid3 = data/tin02/test.txt
+valid4 = data/box03/test.txt
+backup = backup_multi
+gpus = 0,1
+im_width = 1280
+im_height = 720
