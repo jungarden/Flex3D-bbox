@@ -1,8 +1,9 @@
 ---
 
 ## Flexible 3D Bounding Box Object Detection (Flex3D-bbox)
-
 This project focuses on 3D bounding box object detection using various datasets, optimized inference processes, and the introduction of multi-object inference capabilities.
+
+![video2](https://github.com/user-attachments/assets/bf39fea3-3afb-4b3a-aca9-0a6a4da62ab0)
 
 ### Key Features
 
@@ -118,9 +119,7 @@ python3 img_inference.py \
 Below is an example of the detection results:
 *multi classes
 ![image](https://github.com/user-attachments/assets/80527fda-cfbc-41ae-b5b3-88779a124084)
-![video2](https://github.com/user-attachments/assets/bf39fea3-3afb-4b3a-aca9-0a6a4da62ab0)
 ![video](https://github.com/user-attachments/assets/43aae97d-c3c4-428c-a886-c2a883a1bf1d)
-
 ### 8. References
 
 - **Original Source**: [Microsoft SingleShotPose](https://github.com/microsoft/singleshotpose)
