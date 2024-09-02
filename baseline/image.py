@@ -131,24 +131,14 @@ def change_background(img, mask, bg):
     return out
 
 def load_data_detection(imgpath, shape, jitter, hue, saturation, exposure, num_keypoints, max_num_gt):
-
-    # 파일 이름 추출 및 확장자 변경
+    
     filename = imgpath.split('/')[-1].replace('.png', '.txt').replace('.jpg', '.txt')
 
-    # 경로에 맞게 labpath 변경
-    # labpath = os.path.join('data', imgpath.split('/')[-4], 'labels', filename)
-    labpath = imgpath.replace('.jpg', '.txt').replace('.png', '.txt').replace('augmented_images','augmented_labels').replace('Images','labels')
-
-    type = ".Images"
-    if "투명" in imgpath:
-        type = ".TR"
-
-    # maskpath = imgpath.replace('원천데이터', '라벨링데이터').replace(type, '.Mask').replace('.png', '_b.png')
-
+    # Modify labpath according to your needs
+    labpath = os.path.join('data', imgpath.split('/')[-4], 'labels', filename)
+    
     ## data augmentation
     img = Image.open(imgpath).convert('RGB')
-    # mask = Image.open(maskpath).convert('RGB')
-    # bg = Image.open(bgpath).convert('RGB')
     
     # img = change_background(img, mask, bg)
     img,flip,dx,dy,sx,sy = data_augmentation(img, shape, jitter, hue, saturation, exposure)
