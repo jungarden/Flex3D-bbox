@@ -1,6 +1,6 @@
 ---
 
-## 3D Bounding Box Object Detection (3DBBox)
+## Flexible 3D Bounding Box Object Detection (Flex3D-bbox)
 
 This project focuses on 3D bounding box object detection using various datasets, optimized inference processes, and the introduction of multi-object inference capabilities.
 
