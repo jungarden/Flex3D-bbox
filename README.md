@@ -1,6 +1,6 @@
 ---
 
-## Flexible 3D Bounding Box Object Detection (Flex3D-bbox)
+# Flexible 3D Bounding Box Object Detection (Flex3D-bbox)
 This project focuses on 3D bounding box object detection using various datasets, optimized inference processes, and the introduction of multi-object inference capabilities.
 
 ![video2](https://github.com/user-attachments/assets/bf39fea3-3afb-4b3a-aca9-0a6a4da62ab0)
@@ -68,14 +68,13 @@ Install the required libraries as follows:
 
 ### 3. Preparing Dataset Labels
 
-Before training, ensure your dataset labels are correctly formatted using the `txt_labels.py` script:
+Before training, ensure your dataset labels are correctly formatted using the txt_labels.py script: This script parses and converts your dataset's labeling information into the format required for training. Make sure to select the appropriate labeling method for your dataset, whether it is manually labeled or follows the AIHUB dataset format.
 
 ```sh
 python3 making_txt_labels.py
 ```
 ![image](https://github.com/user-attachments/assets/5b821868-8962-4590-97a9-0eba3114513d)
 
-This script parses and converts your dataset's labeling information into the format required for training.
 
 ### 4. Training (Multi-Object)
 
