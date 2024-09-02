@@ -87,7 +87,8 @@ python3 train.py \
 --initweightfile cfg/darknet19_448.conv.23 \ 
 --pretrain_num_epochs 15
 ```
-* darknet19_448.cov.23 is not included in this repo. 
+* darknet19_448.cov.23 is not included in this repo.
+
 ### 5. Training (Finetuning)
 
 For finetuning on a custom dataset, run:
@@ -117,8 +118,9 @@ python3 img_inference.py \
 Below is an example of the detection results:
 *multi classes
 ![image](https://github.com/user-attachments/assets/80527fda-cfbc-41ae-b5b3-88779a124084)
-![video](https://github.com/user-attachments/assets/43aae97d-c3c4-428c-a886-c2a883a1bf1d)
 ![video2](https://github.com/user-attachments/assets/bf39fea3-3afb-4b3a-aca9-0a6a4da62ab0)
+![video](https://github.com/user-attachments/assets/43aae97d-c3c4-428c-a886-c2a883a1bf1d)
+
 ### 8. References
 
 - **Original Source**: [Microsoft SingleShotPose](https://github.com/microsoft/singleshotpose)
