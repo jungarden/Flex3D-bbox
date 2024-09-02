@@ -147,10 +147,10 @@ Below is an example of the detection results:
 
 #### System Architecture
 - **Repository Structure**:
-  - `baseline`: Single object detection
-  - `multi`: Multi-object detection
-  - `dataset`: Contains various datasets
-  - `utils`: Contains utility functions (e.g get_anchors.py)
+  - `baseline/`: Single object detection
+  - `multi/`: Multi-object detection
+  - `dataset/`: Contains various datasets
+  - `utils/`: Contains utility functions (e.g get_anchors.py)
 
 #### Code Modifications
 
