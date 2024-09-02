@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os 
 
-backupdir = '/data/yolo3d/YOLO3D/3dhub/MISO/singleshotpose/multi_obj_pose_estimation/backup_multi'
+backupdir = 
 # npz file load
 data = np.load(os.path.join(backupdir, "costs.npz"))
 
