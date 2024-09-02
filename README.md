@@ -1,2 +1,2 @@
-# 3d_object_multi
+# 3d_bbox
 3d object detection focus on multi classes, fine tuning 
