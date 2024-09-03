@@ -104,7 +104,6 @@ cfg/yolo-pose-multi.cfg \
 --pretrain_num_epochs 15
 ```
 * [darknet19_448](https://drive.google.com/file/d/1ZSeyHe5RM6KxZ-PEecNIB3EnkV-7n1RY/view?usp=sharing)
-* [pretrained model](https://drive.google.com/file/d/1tZ-_xD_y2bgIjt8EHVv5RJ4GvjhSgdKL/view?usp=sharing) 
 ### 4-2. Training (Finetuning)
 
 For finetuning on a custom dataset, run:
