@@ -109,7 +109,7 @@ For finetuning on a custom dataset, run:
 
 ```sh
 python3 train.py \
---datacfg data/box3d.data \
+--datacfg data/trainbox.data \
 --modelcfg cfg/yolo-pose.cfg \
 --initweightfile backup/parcel3d/model.weights \
 --pretrain_num_epochs 5
