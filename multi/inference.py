@@ -308,7 +308,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='SingleShotPose Inference')
     parser.add_argument('--modelcfg', type=str, default='cfg/yolo-pose-multi.cfg')  # network config
-    parser.add_argument('--weightfile', type=str, default='backup_multi/model12.weights')  # pretrained weights
+    parser.add_argument('--weightfile', type=str, default='backup_multi/model.weights')  # pretrained weights
     parser.add_argument('--file', type=str, required=True, help='image or video file(image,folder,video,webcam(0)) for inference')
     args = parser.parse_args()
 
