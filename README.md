@@ -6,8 +6,7 @@
 
 Building on the work by Bugra Tekin, Sudipta N. Sinha, and Pascal Fua in "Real-Time Seamless Single Shot 6D Object Pose Prediction" (CVPR 2018), this implementation enhances the original framework to better address everyday object detection tasks.   [Paper](http://openaccess.thecvf.com/content_cvpr_2018/papers/Tekin_Real-Time_Seamless_Single_CVPR_2018_paper.pdf)
 
-We introduce fine-tuning across diverse datasets, from custom-labeled data to standard benchmarks, with seamless parsing of both into a unified labeling format. The system supports multiple input types, including images and videos, and is optimized for robust multi-object and multi-class inference. These improvements make the method highly adaptable and effective for a wide range of real-world applications.
-
+"We've integrated fine-tuning across diverse datasets, ranging from custom-labeled data to standard benchmarks, with seamless conversion into a unified labeling format. The system supports multiple input types, including images, videos, and even webcam feeds, and is optimized for robust multi-object and multi-class inference. These enhancements make the method highly adaptable and effective for a wide range of real-world applications."
 
 
 ![video2](https://github.com/user-attachments/assets/bf39fea3-3afb-4b3a-aca9-0a6a4da62ab0)
